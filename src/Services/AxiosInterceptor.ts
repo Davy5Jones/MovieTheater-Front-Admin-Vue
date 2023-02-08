@@ -24,8 +24,8 @@ tokenAxios.interceptors.response.use(
        router.push("/home/login")
        return
     }
-    console.log(error);
     notify.error(error.response.data);
+    return Promise.reject(error);
   }
 );
 

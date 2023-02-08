@@ -37,20 +37,25 @@ table {
     table-layout: fixed;
 margin: 15px;
 border-spacing: 0;
+border-radius: 8px;
+overflow: hidden;
 }
 
 th {
   text-align: left;
   font-weight: 500;
-  background-color: whitesmoke;
+  background-color: rgba(245, 245, 245, 0.555);
   margin: 0;
   padding: 5px;
 }
-
+.Linked{
+  text-align: left;
+  font-weight: 600;
+  cursor: pointer;
+}
 th span{
   text-align: left;
-  font-weight: 700;
-  background-color: whitesmoke;
+  font-weight: 800;
   cursor: pointer;
 }
 

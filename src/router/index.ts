@@ -1,10 +1,13 @@
-import LogginPage from "@/components/LogginPage.vue";
+
 import Home from "@/components/Pages/Home.vue";
 import Page404 from "@/components/Pages/Page404.vue";
 import ScreeningList from "@/components/ScreeningArea/ScreeningList.vue";
 import Store,{getter} from "@/Vuex/Store";
 import type * as vueRouter from "vue-router";
 import MovieList from "@/components/MovieArea/MovieList.vue";
+import LogginPage from "@/components/Forms/LogginPage.vue"
+import AddMovie from "@/components/Forms/AddMovie.vue";
+
 
 
 import  {
@@ -14,6 +17,8 @@ import  {
 import SingleMovieVue from "@/components/MovieArea/SingleMovie.vue";
 import SingleScreeningVue from "@/components/ScreeningArea/SingleScreening.vue";
 import PurchasesList from "@/components/PurchaseArea/PurchasesList.vue";
+import CustomerList from "@/components/CustomerArea/CustomerList.vue";
+import SingleCustomerVue from "@/components/CustomerArea/SingleCustomer.vue";
 const ifNotAuthenticated = (
   to: vueRouter.RouteLocationNormalized,
   from: vueRouter.RouteLocationNormalized,
@@ -82,6 +87,12 @@ const router = createRouter({
       component: MovieList,
     },
     {
+      path: "/movies/add",
+      name: "addMovie",
+      beforeEnter: ifAuthenticated,
+      component: AddMovie,
+    },
+    {
       path: "/movies/:id",
       name: "singleMovie",
       beforeEnter: ifAuthenticated,
@@ -92,6 +103,18 @@ const router = createRouter({
       name: "purchases",
       beforeEnter: ifAuthenticated,
       component: PurchasesList,
+    },
+    {
+      path: "/customers",
+      name: "customers",
+      beforeEnter: ifAuthenticated,
+      component: CustomerList,
+    },
+    {
+      path: "/customers/:id",
+      name: "singleCustomer",
+      beforeEnter: ifAuthenticated,
+      component: SingleCustomerVue,
     },
 
     {

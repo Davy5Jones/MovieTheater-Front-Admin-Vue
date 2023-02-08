@@ -4,12 +4,7 @@ import Footer from "./components/Layout/Footer.vue"
 import Main from "./components/Layout/Main.vue"
 import Menu from "./components/Layout/Menu.vue"
 
-components:{
-  Header;
-  Footer;
-  Main;
-  Menu;
-}
+
 </script>
 
 <template>
@@ -37,11 +32,11 @@ components:{
     width: 14px;
 }
 ::-webkit-scrollbar-thumb {
-    background: #38384d;
+    background:  rgb(66, 62, 88);
     border-radius: 8px;
     height: 20%;
 }::-webkit-scrollbar-track {
-    background: #191923;
+    background:  #2F2D42ff;
 }
           
 

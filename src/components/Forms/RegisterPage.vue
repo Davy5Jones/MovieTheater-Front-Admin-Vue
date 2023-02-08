@@ -5,33 +5,44 @@
     </header>
     <main>
       <form
-        id="login_form"
+        id="register_form"
         class="form_class"
-        action="login/login-access.php"
-        method="post"
+                    @submit="()=>submitLogin()"
       >
         <div class="form_div">
           <label>Email:</label>
           <input
+             v-model="formRegister.registerModel.email"
             class="field_class"
             name="login_txt"
             type="text"
-            placeholder="Email"
+            :placeholder="formRegister.errors['email']||'Email'"
             autofocus
+
+            @blur="validate('email')" 
+            @keypress="validate('email')"
+                        @input="validate('email')"
           />
           <label>Password:</label>
           <input
+
+           v-model="formRegister.registerModel.password"
+
             id="pass"
             class="field_class"
             name="password_txt"
             type="password"
-            placeholder="Password"
+            :placeholder="formRegister.errors['password']||'Password'"
+
+            @blur="validate('password')" 
+            @keypress="validate('password')"
+                        @input="validate('password')"
+
           />
           <button
             class="submit_class"
             type="submit"
             form="login_form"
-            onclick="return validarLogin()"
           >
             Submit
           </button>
@@ -39,28 +50,33 @@
         <div class="info_div">
           <p>
             Not registered yet?
-            <a href="register/reg-form.php">Register Here!</a>
+
+             <router-link to="/home/register"  
+      >Register Here!</router-link
+    >
           </p>
         </div>
       </form>
     </main>
     <footer>
-      <p>Company <a href="#">CinemaIL&trade;</a></p>
+      <p>Company 
+        
+        <a href="#">CinemaIL&trade;</a></p>
     </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import webApi from "@/Services/WebApi";
-import type { LoginModel } from "../Models/BaseModels";
+import webApi from "../../Services/WebApi";
+import type { LoginModel, RegisterModel } from "../../Models/BaseModels";
 import * as yup from "yup";
-import Store, { actions } from "@/Vuex/Store";
+import Store, { actions } from "../../Vuex/Store";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
-import notify from "@/Services/NotificationService";
+import notify from "../../Services/NotificationService";
 
 interface FormLogin {
-  loginModel: LoginModel;
+  registerModel: RegisterModel;
   errors: { [key: string]: string };
 }
 const schema = yup.object().shape({
@@ -71,14 +87,19 @@ const schema = yup.object().shape({
     .max(40, "too many chars!"),
   password: yup
     .string()
-    // .min(4, "password length minimum is 4 letters")
+    .min(4, "password length minimum is 4 letters")
     .required("Password is required")
+    .max(40, "too many chars!"),
+    name: yup
+    .string()
+    .min(3,"We need at lest 3 characters!")
+    .required("Email is required")
     .max(40, "too many chars!"),
 });
 const isDirty = ref<boolean>(false);
 
-const formLogin = ref<FormLogin>({
-  loginModel: { email: "", password: "" },
+const formRegister = ref<FormLogin>({
+  registerModel: { email: "", password: "",name:"" },
   errors: {
     email: "",
     password: "",
@@ -88,8 +109,8 @@ const route = useRouter();
 function submitLogin() {
   webApi
     .login({
-      email: formLogin.value.loginModel.email,
-      password: formLogin.value.loginModel.password,
+      email: formRegister.value.registerModel.email,
+      password: formRegister.value.registerModel.password,
     })
     .then((res) => {
       Store.dispatch(actions.SET_IS_LOGGED, true);
@@ -102,11 +123,12 @@ function submitLogin() {
 }
 
 function validate(field: string) {
+  console.log("vali");
   schema
-    .validateAt(field, formLogin.value.loginModel)
-    .then(() => (formLogin.value.errors[field] = ""))
+    .validateAt(field, formRegister.value.registerModel)
+    .then(() => (formRegister.value.errors[field] = ""))
     .catch((err) => {
-      formLogin.value.errors[err.path] = err.message;
+      formRegister.value.errors[err.path] = err.message;
     });
 }
 
@@ -114,8 +136,8 @@ const active = computed<boolean>(() => {
   return (
     !isDirty.value ||
     !(
-      formLogin.value.errors["email"] === "" &&
-      formLogin.value.errors["password"] === ""
+      formRegister.value.errors["email"] === "" &&
+      formRegister.value.errors["password"] === ""
     )
   );
 });

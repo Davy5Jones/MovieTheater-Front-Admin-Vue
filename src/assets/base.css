@@ -8,14 +8,14 @@
     --heading-color: #818cab;
 } */
 :root {
-  --primary-color:#E8E8E8;
+  --primary-color:#5b5858;
   
-    --secondary-color: #242e39;
-    --font-color: #333333;
+    --secondary-color: #a29c9c;
+    --font-color: #2c2c2c;
     --bg-color: #f2f2f2;
     --heading-color: #9BA4B4;
-    --table-color1: #242e39;
-        --table-color2: #2f3c48;
+    --table-color1: #242e39a2;
+        --table-color2: #2f3c4886;
 
 
 

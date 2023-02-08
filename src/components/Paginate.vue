@@ -29,9 +29,9 @@ const emit = defineEmits<{
 
 <style scoped>
 .Paginate {
+  position: relative;
     margin:10px;
     min-height: 35px;
-    background-color: gray;
     align-items: center;
     text-align:center;
     display: flex;
@@ -39,16 +39,18 @@ const emit = defineEmits<{
     align-items: center;
     justify-content: center;
     width: 80%;
+    bottom: 5px;
 }
 button{   cursor: pointer;
 
-    background-color:var(--font-color);
+    background-color:var(--primary-color);
     border: none;
     height: 30px;
     width: 30px;
     border-radius: 3px;
     color: white;
     margin: 2px; 
+    opacity: 0.7;
 
 }
 .selected{

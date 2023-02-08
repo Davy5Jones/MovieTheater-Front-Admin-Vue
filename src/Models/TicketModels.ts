@@ -22,6 +22,7 @@ export interface TicketDao {
     seatId: number;
     used: boolean;
     _links: Links;
+    screeningId:String;
   }
 
 

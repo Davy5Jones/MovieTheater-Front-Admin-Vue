@@ -1,5 +1,9 @@
 <template>
   <div class="PurchasesListWrapper">
+    <div>
+    <header>
+      <h1>Purchases</h1>
+    </header>
     <table class="PurchasesList">
       <tbody>
         <tr>
@@ -19,7 +23,9 @@
             <td
              
             >
-              {{ ticket.userEmail }}
+             <span @click="
+                (event) => router.push({ path: '/customers' + '/' + ticket.userId })
+              " class="Linked">{{ ticket.userEmail }}</span>
             </td>
             <td>
                 
@@ -27,10 +33,13 @@
             </td>
             <td 
               >
-              {{
+              <span @click="
+                (event) => router.push({ path: '/screenings' + '/' + ticket.screeningId })
+              " class="Linked">{{
                 moment(ticket.dateTime).format("DD/M/YY HH:mm")
-              }}
+              }}</span>
             </td>
+              
             <td> {{ ticket.theaterName }}</td>
             <td>{{ (ticket.rowId+1) +'/'+ (ticket.seatId+1) }}</td>
             <td> {{moment(ticket.purchaseTime).format("DD/M/YY HH:mm")  }}</td>
@@ -38,6 +47,7 @@
         </template>
       </tbody>
     </table>
+    </div>
     <Paginate
       @update-url="(add:string) => watchUrl(add)"
       v-if="info && links"
@@ -111,13 +121,14 @@ function init() {
 
 <style scoped>
 @import "../../assets/list.css";
+@import "../../assets/Header.css";
+
 .PurchasesListWrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
+    min-height: 75vh;
   display: flex;
-    justify-content: space-between;
     align-items: center;
 }
 

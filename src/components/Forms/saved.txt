@@ -1,0 +1,102 @@
+ <div class="wrapper">
+    <header>
+      <h1>New movie</h1>
+    </header>
+    <main>
+      <form
+        :style="{
+          background: 'url(' + movieForm.movie.img + ') no-repeat center',
+        }"
+        id="login_form"
+        class="form_class"
+        @submit="() => submitLogin()"
+      >
+          <div class="form_div">
+              
+              <input
+                v-model="movieForm.movie.name"
+                class="field_class"
+                type="text"
+                :placeholder="'Movie Name'"
+                @blur="validate('name')"
+                @keypress="validate('name')"
+                @input="validate('name')"
+              /><label>Movie Name:</label>
+            </div>
+
+            <select
+              v-model="movieForm.movie.genre"
+              class="field_class"
+              @blur="validate('genre')"
+              @keypress="validate('genre')"
+              @input="validate('genre')"
+            >
+             
+              <template v-for="genre in MovieGenre">
+                <option value="genre">{{ Capitalize(genre) }}</option></template
+              >
+            </select> <label>{{ movieForm.errors.genre }}</label>
+          <label>Duration:</label>
+          <input
+            v-model="movieForm.movie.duration"
+            class="field_class"
+            type="number"
+            :placeholder="movieForm.errors['duration'] || 'duration'"
+            @blur="validate('password')"
+            @keypress="validate('password')"
+            @input="validate('password')"
+          />
+
+          <label>Rating:</label>
+          <input
+            v-model="movieForm.movie.rating"
+            class="field_class"
+            type="number"
+            :placeholder="movieForm.errors['rating'] || 'rating'"
+            @blur="validate('rating')"
+            @keypress="validate('rating')"
+            @input="validate('rating')"
+          />
+          <label>Description:</label>
+          <input
+            v-model="movieForm.movie.name"
+            class="field_class"
+            type="text"
+            :placeholder="movieForm.errors['description'] || 'description'"
+            @blur="validate('description')"
+            @keypress="validate('description')"
+            @input="validate('description')"
+          />
+          <label>Image:</label>
+          <input
+            v-model="movieForm.movie.img"
+            class="field_class"
+            type="text"
+            :placeholder="movieForm.errors['img'] || 'Image'"
+            @blur="validate('img')"
+            @keypress="validate('img')"
+            @input="validate('img')"
+          />
+
+          <label>Trailer:</label>
+          <input
+            v-model="movieForm.movie.trailer"
+            class="field_class"
+            type="text"
+            :placeholder="movieForm.errors['trailer'] || 'trailer'"
+            @blur="validate('trailer')"
+            @keypress="validate('trailer')"
+            @input="validate('trailer')"
+          />
+          <button class="submit_class">Submit</button>
+        
+      </form>
+    </main>
+    <footer>
+      <p>
+        Company
+
+        <a href="#">CinemaIL&trade;</a>
+      </p>
+    </footer>
+  </div>

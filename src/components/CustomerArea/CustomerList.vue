@@ -1,49 +1,46 @@
 <template>
-  <div :key="key" class="MovieListWrapper">
+  <div class="CustomerListWrapper">
     <div>
     <header>
-      <h1>Movies</h1>
+      <h1>Customers</h1>
     </header>
-    <table class="MovieList">
+    <table class="CustomerList">
       <tbody>
         <tr>
+          <th class="ThHover" @click="alterSorting('email')">
+            <span>Email</span>
+          </th>
           <th class="ThHover" @click="alterSorting('name')">
-            <span>Movie</span>
+            <span>Name</span>
           </th>
-          <th class="ThHover" @click="alterSorting('duration')">
-            <span>Duration</span>
-          </th>
-          <th class="ThHover" @click="alterSorting('rating')">
-            <span>Rating</span>
-          </th>
-          <th class="ThHover" @click="alterSorting('category')">
-            <span>Category</span>
-          </th>
-          <th>
-            Active
-          </th>
+          <th>Registration</th>
+          <th>Last Seen</th>
         </tr>
-        <template v-for="movie in movies">
+        <template v-for="customer in customers">
           <tr>
-            <td
-            
-            >
-              <span @click="
-                (event) => router.push({ path: 'movies' + '/' + movie.id })
-              " class="Linked">{{ movie.name }}</span>
-            </td>
             <td>
-              {{ movie.duration }}
+ <span @click="
+                (event) => router.push({ path: '/customers' + '/' + customer.id })
+              " class="Linked">{{ customer.emailAddress }}</span>            </td>
+            <td>
+              {{ customer.customerName }}
             </td>
-            <td>{{ movie.rating }}</td>
-            <td>{{Capitalize(movie.genre)  }}</td>
-            <td><span>{{ movie.active ? "Yes" : "No" }}</span>
-            <img @click="()=>updateActive(!movie.active,movie.id)" :src="movie.active? 'https://i.ibb.co/X4vPSmq/On.png':'https://i.ibb.co/d48s2KR/Off.png'"/></td>
+            <td>{{ moment(customer.registered).format("DD.MM.YYYY") }}</td>
+            <td>
+              {{
+               new Date(customer.lastSeen ) >new Date(Date.now() - 1000 * 60 * 5)
+                  ? "Online"
+                  : displayTime(((Date.now() )-
+                     new Date(customer.lastSeen).getTime()-
+                        1000 * 60 * 5
+                       ) /1000
+                    )
+              }}
+            </td>
           </tr>
         </template>
       </tbody>
-    </table>
-    </div>
+    </table></div>
     <Paginate
       @update-url="(add) => watchUrl(add)"
       v-if="info && links"
@@ -59,15 +56,16 @@ import webApi from "../../Services/WebApi";
 import { onMounted, ref, watch, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import Paginate from "../Paginate.vue";
-import type { MovieModelDto } from "@/Models/MovieModel";
 import { alterSort, getPageWatcher } from "@/Beans";
-import { Capitalize } from "../../Helper";
+import type { CustomerModelDto } from "@/Models/UserModels";
+import moment from "moment";
+import { Capitalize, displayTime } from "../../Helper";
 
-const movies = ref<MovieModelDto[]>([]);
+
+const customers = ref<CustomerModelDto[]>([]);
 const url = ref<Link>({
   href: "",
 });
-const key = ref<number>(1)
 
 const info = ref<PageInfo>();
 const links = ref<PageLinks>();
@@ -98,66 +96,41 @@ onMounted(() => {
 });
 const init = () => {
   webApi
-    .moviePage(
-      (page.value || "0").toString(),
-      sort.value || "",
-      order.value || ""
-    )
+    .GetUserPage(page.value || 0, sort.value || "", order.value || "")
     .then((res) => {
-      movies.value = res.data._embedded.movieModelDtoList;
+      customers.value = res.data._embedded.customerModelDtoList;
       info.value = res.data.page;
       links.value = res.data._links;
+      console.log(new Date(res.data._embedded.customerModelDtoList[0].lastSeen).getTime() );
     });
 };
 
 const watchUrl = (add: string) => {
   url.value = { href: add };
-  webApi.moviePageByUrl(url.value.href).then((res) => {
-    movies.value = res.data._embedded.movieModelDtoList;
+  webApi.GetUserPageUrl(url.value.href).then((res) => {
+    customers.value = res.data._embedded.customerModelDtoList;
     info.value = res.data.page;
     links.value = res.data._links;
     page.value = info.value.number;
   });
 };
-
-const updateActive= (active:boolean,movieId:string) =>{
-  console.log("yoyo",movieId);
-  webApi.activationMovie(movieId,active).then(res =>{
-    router.go(0);
-  });
-}
 </script>
 
 <style scoped>
 @import "../../assets/list.css";
 @import "../../assets/Header.css";
 
-.MovieList {
+
+.CustomerList {
   text-align: center;
 }
-
-.MovieListWrapper {
+.CustomerListWrapper {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-    min-height: 75vh;
+  min-height: 75vh;
   padding: 0;
   justify-content: space-between;
   align-items: center;
 }
-
-img{
-  width: 20%;
-  margin-left: 5px;
-  cursor:pointer;
-}
-td {
-  vertical-align: middle;
-}
-
-td img {
-  vertical-align: middle;
-}
-
-
 </style>

@@ -1,19 +1,25 @@
 <template>
-    <div v-if="screenings.length>0" class="MovieScreeningsWrapper">
-            <h1>Active screenings</h1>
+    <div v-if="purchases.length>0" class="CustomerTicketsWrapper">
+            <h1>Purchases</h1>
 
-        <table class="MovieScreenings">
+        <table class="CustomerTickets">
       <tbody>
-      <tr><th>Screening</th><th>Theater</th><th>3D</th><th>Tickets Bought/Left</th> </tr> 
+      <tr><th>Movie</th><th>Screening</th><th>Theater</th><th>Row/Seat</th><th>Purchase Time</th> </tr> 
 
-      <template v-for="screenin in screenings">
+      <template v-for="purchase in purchases">
          <tr >
-<td >
-    <span class="Linked" @click="(event)=>router.push({path:'/screenings'+'/'+screenin.id})">{{moment(screenin.screenTime).format("DD/MM/YYYY HH:mm")}}</span>
+<td>{{purchase.movieName}}</td>
+<td>
+  <span @click="
+                (event) => router.push({ path: '/screenings' + '/' + purchase.screeningId })
+              " class="Linked">{{ moment(purchase.dateTime).format("DD/MM/YYYY HH:mm")}}</span>
+    
 </td>
-<td>{{screenin.theaterName}}</td>
-<td>{{ screenin.threeD?"Yes":"No" }}</td>
-<td>{{countTruthiness(screenin.seats) }}</td>
+<td>{{purchase.theaterName}}</td>
+<td>{{  (purchase.rowId+1) +'/'+ (purchase.seatId+1) }}</td>
+<td>
+    {{ moment(purchase.purchaseTime).format("DD/MM/YYYY HH:mm")}}
+</td>
     </tr>
       </template>
     </tbody>
@@ -21,55 +27,40 @@
         <Paginate v-if="info&&links" :info="info" :links="links"  @update-url="(add: string)=>watchUrl(add)"  />
       </div>
 
-      <h2 v-else>No screenings at the moment...</h2>
+      <h2 v-else>No purchases!</h2>
 </template>
 
 <script setup lang="ts">
 import type { Link, PageInfo, PageLinks } from '@/Models/BaseModels';
 import type { ScreeningModelDto } from '@/Models/ScreeningModel';
+import type { TicketDto } from '@/Models/TicketModels';
 import webApi from '@/Services/WebApi';
 import moment from 'moment';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import Paginate from '../Paginate.vue';
-const props = defineProps<{id:string}>()
+const props = defineProps<{id:number}>()
 const router = useRouter()
 const url = ref<Link>({href: ""});
 const info = ref<PageInfo>();
 const links = ref<PageLinks>();
-const order = ref<string>();
-
-const screenings =ref<ScreeningModelDto[]>([])
+const purchases =ref<TicketDto[]>([])
 //router.push({path:"screenings",query:{page:info.value?.number+1}})
 
 onMounted(()=>{
-  webApi.screeningPageByMovieId(props.id,"",0,order.value||"").then((res) => {
-    screenings.value = res.data._embedded.screeningModelDtoList;
+  webApi.GetTicketPageByCustomer(0,"","",props.id).then((res) => {
+    purchases.value = res.data._embedded.ticketModelDtoList;
     info.value = res.data.page;
     links.value = res.data._links;
 
   });
 })
 
-function countTruthiness(arr: boolean[][]): string {
-    let trueCount = 0;
-    let falseCount = 0;
-    for (let row of arr) {
-        for (let value of row) {
-            if (value) {
-                trueCount++;
-            } else {
-                falseCount++;
-            }
-        }
-    }
-    return trueCount+'/'+ falseCount;
-}
 
 const watchUrl=(add:string)=>{
   url.value={href:add}
-   webApi.screeningPageByMovieIdUrl(add).then((res) => {
-    screenings.value = res.data._embedded.screeningModelDtoList;
+   webApi.GetTicketsUrl(add).then((res) => {
+    purchases.value = res.data._embedded.ticketModelDtoList;
     info.value = res.data.page;
     links.value = res.data._links;
 })
@@ -81,18 +72,19 @@ const watchUrl=(add:string)=>{
 
 @import "../../assets/Header.css";
 
-.MovieScreenings {
+.CustomerTickets {
   height: 100%;
 
     
 }
-.MovieScreeningsWrapper{
+.CustomerTicketsWrapper{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
     align-items: center;
     max-height: fit-content;
     width: 100%;
+    margin-bottom: 10px;
 }
 
 h1 {
@@ -101,6 +93,9 @@ h1 {
   text-transform: uppercase;
   text-align: center;
   color: white;
+  background-color: rgba(0, 0, 0, 0.36);
+  padding: 5px 12px;
+  border-radius: 5px;
 }
 
 </style>
